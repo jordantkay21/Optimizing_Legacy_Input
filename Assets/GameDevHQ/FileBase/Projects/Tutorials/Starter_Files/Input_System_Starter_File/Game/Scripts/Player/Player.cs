@@ -48,39 +48,51 @@ namespace Game.Scripts.Player
                 Debug.Log("Failed to connect the Animator");
         }
 
-        private void Update()
+        /* private void Update()
         {
-            if (_canMove == true)
-                CalcutateMovement();
+            //if (_canMove == true)
+                //CalcutateMovement();
 
-        }
+        } */
 
-        private void CalcutateMovement()
+        public void Move(Vector2 direction)
         {
-            _playerGrounded = _controller.isGrounded;
-            float h = Input.GetAxisRaw("Horizontal");
-            float v = Input.GetAxisRaw("Vertical");
-
-            transform.Rotate(transform.up, h);
-
-            var direction = transform.forward * v;
             var velocity = direction * _speed;
 
+            transform.Translate(new Vector3(direction.x, 0, direction.y) * Time.deltaTime);
 
             _anim.SetFloat("Speed", Mathf.Abs(velocity.magnitude));
 
-
-            if (_playerGrounded)
-                velocity.y = 0f;
-            if (!_playerGrounded)
-            {
-                velocity.y += -20f * Time.deltaTime;
-            }
-            
-            _controller.Move(velocity * Time.deltaTime);                      
-
+            transform.Rotate(transform.up, direction.x);
         }
+        /* private void CalcutateMovement()
+         {
+             _playerGrounded = _controller.isGrounded;
+             float h = Input.GetAxisRaw("Horizontal");
+             float v = Input.GetAxisRaw("Vertical");
 
+             transform.Rotate(transform.up, h);
+
+             var direction = transform.forward * v;
+             var velocity = direction * _speed;
+
+
+             _anim.SetFloat("Speed", Mathf.Abs(velocity.magnitude));
+
+
+             if (_playerGrounded)
+                 velocity.y = 0f;
+             if (!_playerGrounded)
+             {
+                 velocity.y += -20f * Time.deltaTime;
+             }
+
+             _controller.Move(velocity * Time.deltaTime);                      
+
+         }
+        */
+
+      
         private void InteractableZone_onZoneInteractionComplete(InteractableZone zone)
         {
             switch(zone.GetZoneID())
