@@ -9,6 +9,7 @@ namespace Game.Scripts.LiveObjects
 {
     public class InteractableZone : MonoBehaviour
     {
+        private PlayerInputActions _input;
         private enum ZoneType
         {
             Collectable,
@@ -66,9 +67,61 @@ namespace Game.Scripts.LiveObjects
         public static event Action<int> onHoldStarted;
         public static event Action<int> onHoldEnded;
 
+        private void InitializeInputs()
+        {
+            _input = new PlayerInputActions();
+            _input.Player.Enable();
+
+            _input.Player.InteractableZones.performed += InteractableZones_performed;
+            _input.Player.InteractableZones.started += InteractableZones_started;
+        }
+
+        private void InteractableZones_started(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            if (_inZone == true)
+            {
+                switch (_zoneType)
+                {
+                    case ZoneType.HoldAction:
+                        PerformHoldAction();
+                        break;
+                }
+            }
+        }
+
+        private void InteractableZones_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            if (_inZone == true)
+            {
+                //press
+                switch (_zoneType)
+                {
+                    case ZoneType.Collectable:
+                        if (_itemsCollected == false)
+                        {
+                            CollectItems();
+                            _itemsCollected = true;
+                            UIManager.Instance.DisplayInteractableZoneMessage(false);
+                        }
+                        break;
+
+                    case ZoneType.Action:
+                        if (_actionPerformed == false)
+                        {
+                            PerformAction();
+                            _actionPerformed = true;
+                            UIManager.Instance.DisplayInteractableZoneMessage(false);
+                        }
+                        break;
+                }
+
+            }
+        }
+
         private void OnEnable()
         {
             InteractableZone.onZoneInteractionComplete += SetMarker;
+            InitializeInputs();
 
         }
 
@@ -120,7 +173,7 @@ namespace Game.Scripts.LiveObjects
             }
         }
 
-        private void Update()
+        /*private void Update()
         {
             if (_inZone == true)
             {
@@ -171,7 +224,7 @@ namespace Game.Scripts.LiveObjects
 
                
             }
-        }
+        } */
        
         private void CollectItems()
         {
