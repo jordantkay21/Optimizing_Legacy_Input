@@ -55,11 +55,12 @@ namespace Game.Scripts.Player
 
         } */
 
-        public void Move(Vector2 direction)
+        public void Move(Vector2 movement)
         {
+            Vector3 direction = new Vector3(movement.x, 0, movement.y);
             var velocity = direction * _speed;
 
-            transform.Translate(new Vector3(direction.x, 0, direction.y) * Time.deltaTime);
+            transform.Translate(direction * Time.deltaTime);
 
             _anim.SetFloat("Speed", Mathf.Abs(velocity.magnitude));
 

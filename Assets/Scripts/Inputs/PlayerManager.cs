@@ -15,6 +15,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     private Drone _drone;
 
+    [SerializeField]
+    private Forklift _forkLift;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,9 +27,11 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector2 move = _input.Player.Movement.ReadValue<Vector2>();
-        _player.Move(move);
+        //Player Controls
+        Vector2 playerMovement = _input.Player.Movement.ReadValue<Vector2>();
+        _player.Move(playerMovement);
 
+        //Drone Controls
         float rotateDirection = _input.Drone.Rotation.ReadValue<float>();
         _drone.CalculateMovementUpdate(rotateDirection);
 
@@ -35,6 +40,11 @@ public class PlayerManager : MonoBehaviour
 
         Vector2 droneMovement = _input.Drone.Movement.ReadValue<Vector2>();
         _drone.CalculateTilt(droneMovement);
+
+        //Fork Lift Controls
+        Vector2 forkLiftMove = _input.ForkLift.Movement.ReadValue<Vector2>();
+        _forkLift.CalculateMovement(forkLiftMove);
+
     }
 
     void InitializeInputs()
@@ -43,11 +53,47 @@ public class PlayerManager : MonoBehaviour
         _input.Player.Enable();
 
         _input.Drone.Escape.performed += Escape_performed;
+
+        _input.ForkLift.Escape.performed += Escape_performed1;
+
+        _input.ForkLift.Lift.started += Lift_started;
+        _input.ForkLift.Lift.canceled += Lift_canceled;
+    }
+
+    private void Lift_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        float liftDirection = 0;
+        _forkLift.LiftDirection(liftDirection);
+    }
+
+    private void Lift_started(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        float liftDirection = _input.ForkLift.Lift.ReadValue<float>();
+        _forkLift.LiftDirection(liftDirection);
+    }
+
+    private void Escape_performed1(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _forkLift.ExitDriveMode();
     }
 
     private void Escape_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         _drone.ExitFlightMode();
+    }
+
+    public void EnableDriveMode(bool driveMode)
+    {
+        if (driveMode == true)
+        {
+            _input.Player.Disable();
+            _input.ForkLift.Enable();
+        }
+        else
+        {
+            _input.Player.Enable();
+            _input.ForkLift.Disable();
+        }
     }
 
     public void EnableDrone(bool flightmode)
