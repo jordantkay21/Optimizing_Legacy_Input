@@ -9,6 +9,9 @@ namespace Game.Scripts.LiveObjects
 {
     public class Drone : MonoBehaviour
     {
+        [SerializeField]
+        private PlayerManager _playerManager;
+
         private enum Tilt
         {
             NoTilt, Forward, Back, Left, Right
@@ -24,6 +27,8 @@ namespace Game.Scripts.LiveObjects
         [SerializeField]
         private CinemachineVirtualCamera _droneCam;
         [SerializeField]
+        private CinemachineVirtualCamera _playerFollowCam;
+        [SerializeField]
         private InteractableZone _interactableZone;
         
 
@@ -35,6 +40,7 @@ namespace Game.Scripts.LiveObjects
             InteractableZone.onZoneInteractionComplete += EnterFlightMode;
         }
 
+        
         private void EnterFlightMode(InteractableZone zone)
         {
             if (_inFlightMode != true && zone.GetZoneID() == 4) // drone Scene
@@ -42,20 +48,23 @@ namespace Game.Scripts.LiveObjects
                 _propAnim.SetTrigger("StartProps");
                 _droneCam.Priority = 11;
                 _inFlightMode = true;
+                _playerManager.EnableDrone(true);
                 OnEnterFlightMode?.Invoke();
                 UIManager.Instance.DroneView(true);
                 _interactableZone.CompleteTask(4);
             }
         }
 
-        private void ExitFlightMode()
+        public void ExitFlightMode()
         {            
             _droneCam.Priority = 9;
+            _playerFollowCam.Priority = 11;
             _inFlightMode = false;
+            _playerManager.EnableDrone(false);
             UIManager.Instance.DroneView(false);            
         }
-
-        private void Update()
+     
+        /*private void Update()
         {
             if (_inFlightMode)
             {
@@ -69,16 +78,22 @@ namespace Game.Scripts.LiveObjects
                     ExitFlightMode();
                 }
             }
-        }
+        }*/
+
 
         private void FixedUpdate()
         {
             _rigidbody.AddForce(transform.up * (9.81f), ForceMode.Acceleration);
-            if (_inFlightMode)
-                CalculateMovementFixedUpdate();
+           // if (_inFlightMode)
+             //   CalculateMovementFixedUpdate();
         }
 
-        private void CalculateMovementUpdate()
+        public void CalculateMovementUpdate(float rotateDirection)
+        {
+            transform.Rotate(Vector3.up * Time.deltaTime * 30f * rotateDirection);
+        }
+
+        /*private void CalculateMovementUpdate()
         {
             if (Input.GetKey(KeyCode.LeftArrow))
             {
@@ -92,9 +107,14 @@ namespace Game.Scripts.LiveObjects
                 tempRot.y += _speed / 3;
                 transform.localRotation = Quaternion.Euler(tempRot);
             }
+        }*/
+
+        public void CalculateMovementFixedUpdate(float heightDirection)
+        {
+            _rigidbody.AddForce((heightDirection * transform.up) * _speed, ForceMode.Acceleration);
         }
 
-        private void CalculateMovementFixedUpdate()
+        /*private void CalculateMovementFixedUpdate()
         {
             
             if (Input.GetKey(KeyCode.Space))
@@ -105,9 +125,14 @@ namespace Game.Scripts.LiveObjects
             {
                 _rigidbody.AddForce(-transform.up * _speed, ForceMode.Acceleration);
             }
+        }*/
+
+        public void CalculateTilt(Vector2 direction)
+        {
+            transform.rotation = Quaternion.Euler((direction.y * 30f), transform.localRotation.eulerAngles.y, (direction.x * 30f));
         }
 
-        private void CalculateTilt()
+        /*private void CalculateTilt()
         {
             if (Input.GetKey(KeyCode.A)) 
                 transform.rotation = Quaternion.Euler(00, transform.localRotation.eulerAngles.y, 30);
@@ -119,7 +144,7 @@ namespace Game.Scripts.LiveObjects
                 transform.rotation = Quaternion.Euler(-30, transform.localRotation.eulerAngles.y, 0);
             else 
                 transform.rotation = Quaternion.Euler(0, transform.localRotation.eulerAngles.y, 0);
-        }
+        }*/
 
         private void OnDisable()
         {
