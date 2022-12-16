@@ -679,6 +679,7 @@ MonoBehaviour:
   _player: {fileID: 359860633}
   _drone: {fileID: 1073608670}
   _forkLift: {fileID: 402105197}
+  _crate: {fileID: 147778361}
 --- !u!1001 &55150248
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2312,6 +2313,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525010d7bc827014da2f7a733a5e6d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerManager: {fileID: 49367384}
   _punchDelay: 0.25
   _wholeCrate: {fileID: 251706182}
   _brokenCrate: {fileID: 1913538860}
@@ -13257,7 +13259,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 4.78e-43, y: 223.34656, z: 4.78e-43, w: -1.8580493e-29}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 0, z: 0, w: -1.8580493e-29}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

@@ -78,13 +78,12 @@ namespace Game.Scripts.LiveObjects
 
         public void CalculateMovement(Vector2 movement)
         {
-            Vector3 direction = new Vector3(movement.x, 0, movement.y);
+            float h = movement.x;
+            float v = movement.y;
+            var direction = new Vector3(0, 0, v);
             var velocity = direction * _speed;
 
             transform.Translate(velocity * Time.deltaTime);
-            
-            float v = movement.y;
-            float h = movement.x;
 
             if (Mathf.Abs(v) > 0)
             {
@@ -93,7 +92,6 @@ namespace Game.Scripts.LiveObjects
                 transform.rotation = Quaternion.Euler(tempRot);
             }
         }
-
         /*private void CalcutateMovement()
         {
             float h = Input.GetAxisRaw("Horizontal");

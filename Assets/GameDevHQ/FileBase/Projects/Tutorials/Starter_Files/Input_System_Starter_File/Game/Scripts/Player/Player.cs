@@ -57,14 +57,27 @@ namespace Game.Scripts.Player
 
         public void Move(Vector2 movement)
         {
-            Vector3 direction = new Vector3(movement.x, 0, movement.y);
+            _playerGrounded = _controller.isGrounded;
+            float h = movement.x;
+            float v = movement.y;
+
+            transform.Rotate(transform.up, h);
+
+            var direction = transform.forward * v;
             var velocity = direction * _speed;
 
-            transform.Translate(direction * Time.deltaTime);
 
             _anim.SetFloat("Speed", Mathf.Abs(velocity.magnitude));
 
-            transform.Rotate(transform.up, direction.x);
+
+            if (_playerGrounded)
+                velocity.y = 0f;
+            if (!_playerGrounded)
+            {
+                velocity.y += -20f * Time.deltaTime;
+            }
+
+            _controller.Move(velocity * Time.deltaTime);
         }
         /* private void CalcutateMovement()
          {

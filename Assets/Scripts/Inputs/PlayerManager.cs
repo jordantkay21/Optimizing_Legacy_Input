@@ -18,6 +18,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     private Forklift _forkLift;
 
+    [SerializeField]
+    private Crate _crate;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -58,6 +61,19 @@ public class PlayerManager : MonoBehaviour
 
         _input.ForkLift.Lift.started += Lift_started;
         _input.ForkLift.Lift.canceled += Lift_canceled;
+
+        _input.Punch.StrongPunch.performed += StrongPunch_performed;
+        _input.Punch.WeakPunch.performed += WeakPunch_performed;
+    }
+
+    private void WeakPunch_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _crate.SetPunch(false);
+    }
+
+    private void StrongPunch_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _crate.SetPunch(true);
     }
 
     private void Lift_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -80,6 +96,18 @@ public class PlayerManager : MonoBehaviour
     private void Escape_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         _drone.ExitFlightMode();
+    }
+
+    public void EnablePunchMode(bool punchMode)
+    {
+        if (punchMode == true)
+        {
+            _input.Punch.Enable();
+        }
+        else
+        {
+            _input.Punch.Disable();
+        }
     }
 
     public void EnableDriveMode(bool driveMode)

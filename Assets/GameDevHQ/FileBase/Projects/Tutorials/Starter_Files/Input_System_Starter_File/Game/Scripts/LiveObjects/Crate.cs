@@ -6,6 +6,10 @@ namespace Game.Scripts.LiveObjects
 {
     public class Crate : MonoBehaviour
     {
+        [SerializeField]
+        private PlayerManager _playerManager;
+        private bool _strongPunch = false;
+
         [SerializeField] private float _punchDelay;
         [SerializeField] private GameObject _wholeCrate, _brokenCrate;
         [SerializeField] private Rigidbody[] _pieces;
@@ -14,6 +18,38 @@ namespace Game.Scripts.LiveObjects
         private bool _isReadyToBreak = false;
 
         private List<Rigidbody> _brakeOff = new List<Rigidbody>();
+
+        public void SetPunch(bool strongPunch)
+        {
+            _strongPunch = strongPunch;
+        }
+
+        private void Punch()
+        {
+            if (_strongPunch == true)
+            {
+                if (_brakeOff.Count > 6)
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        BreakPart();
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < _brakeOff.Count; i++)
+                    {
+                        BreakPart();
+                    }
+                }
+
+            }
+            else
+            {
+                BreakPart();
+            }
+        }
+
 
         private void OnEnable()
         {
@@ -30,11 +66,12 @@ namespace Game.Scripts.LiveObjects
                 _isReadyToBreak = true;
             }
 
-            if (_isReadyToBreak && zone.GetZoneID() == 6) //Crate zone            
+            if (_isReadyToBreak == true && zone.GetZoneID() == 6) //Crate zone            
             {
+                _playerManager.EnablePunchMode(true);
                 if (_brakeOff.Count > 0)
                 {
-                    BreakPart();
+                    Punch();
                     StartCoroutine(PunchDelay());
                 }
                 else if(_brakeOff.Count == 0)
@@ -78,6 +115,7 @@ namespace Game.Scripts.LiveObjects
         private void OnDisable()
         {
             InteractableZone.onZoneInteractionComplete -= InteractableZone_onZoneInteractionComplete;
+            _playerManager.EnablePunchMode(false);        
         }
     }
 }
