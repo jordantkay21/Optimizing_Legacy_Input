@@ -813,6 +813,54 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Laptop"",
+            ""id"": ""91d0a548-7016-4d95-bce9-c1e1fe91352d"",
+            ""actions"": [
+                {
+                    ""name"": ""CameraSwitch"",
+                    ""type"": ""Button"",
+                    ""id"": ""eca02453-93d5-4836-bfc7-c0a125844a3f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Escape"",
+                    ""type"": ""Button"",
+                    ""id"": ""7c304128-996a-4c48-8b8a-dc58310ce8f8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""3693179b-891c-4276-bc6b-e9c3d599dee8"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CameraSwitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d19abef8-5112-4f42-ae35-10154611ba61"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Escape"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -836,6 +884,10 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         m_Punch = asset.FindActionMap("Punch", throwIfNotFound: true);
         m_Punch_WeakPunch = m_Punch.FindAction("WeakPunch", throwIfNotFound: true);
         m_Punch_StrongPunch = m_Punch.FindAction("StrongPunch", throwIfNotFound: true);
+        // Laptop
+        m_Laptop = asset.FindActionMap("Laptop", throwIfNotFound: true);
+        m_Laptop_CameraSwitch = m_Laptop.FindAction("CameraSwitch", throwIfNotFound: true);
+        m_Laptop_Escape = m_Laptop.FindAction("Escape", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1079,6 +1131,47 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         }
     }
     public PunchActions @Punch => new PunchActions(this);
+
+    // Laptop
+    private readonly InputActionMap m_Laptop;
+    private ILaptopActions m_LaptopActionsCallbackInterface;
+    private readonly InputAction m_Laptop_CameraSwitch;
+    private readonly InputAction m_Laptop_Escape;
+    public struct LaptopActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public LaptopActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @CameraSwitch => m_Wrapper.m_Laptop_CameraSwitch;
+        public InputAction @Escape => m_Wrapper.m_Laptop_Escape;
+        public InputActionMap Get() { return m_Wrapper.m_Laptop; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(LaptopActions set) { return set.Get(); }
+        public void SetCallbacks(ILaptopActions instance)
+        {
+            if (m_Wrapper.m_LaptopActionsCallbackInterface != null)
+            {
+                @CameraSwitch.started -= m_Wrapper.m_LaptopActionsCallbackInterface.OnCameraSwitch;
+                @CameraSwitch.performed -= m_Wrapper.m_LaptopActionsCallbackInterface.OnCameraSwitch;
+                @CameraSwitch.canceled -= m_Wrapper.m_LaptopActionsCallbackInterface.OnCameraSwitch;
+                @Escape.started -= m_Wrapper.m_LaptopActionsCallbackInterface.OnEscape;
+                @Escape.performed -= m_Wrapper.m_LaptopActionsCallbackInterface.OnEscape;
+                @Escape.canceled -= m_Wrapper.m_LaptopActionsCallbackInterface.OnEscape;
+            }
+            m_Wrapper.m_LaptopActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @CameraSwitch.started += instance.OnCameraSwitch;
+                @CameraSwitch.performed += instance.OnCameraSwitch;
+                @CameraSwitch.canceled += instance.OnCameraSwitch;
+                @Escape.started += instance.OnEscape;
+                @Escape.performed += instance.OnEscape;
+                @Escape.canceled += instance.OnEscape;
+            }
+        }
+    }
+    public LaptopActions @Laptop => new LaptopActions(this);
     public interface IPlayerActions
     {
         void OnMovement(InputAction.CallbackContext context);
@@ -1101,5 +1194,10 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
     {
         void OnWeakPunch(InputAction.CallbackContext context);
         void OnStrongPunch(InputAction.CallbackContext context);
+    }
+    public interface ILaptopActions
+    {
+        void OnCameraSwitch(InputAction.CallbackContext context);
+        void OnEscape(InputAction.CallbackContext context);
     }
 }

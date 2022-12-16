@@ -791,6 +791,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Laptop",
+            "id": "91d0a548-7016-4d95-bce9-c1e1fe91352d",
+            "actions": [
+                {
+                    "name": "CameraSwitch",
+                    "type": "Button",
+                    "id": "eca02453-93d5-4836-bfc7-c0a125844a3f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Escape",
+                    "type": "Button",
+                    "id": "7c304128-996a-4c48-8b8a-dc58310ce8f8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3693179b-891c-4276-bc6b-e9c3d599dee8",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraSwitch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d19abef8-5112-4f42-ae35-10154611ba61",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Escape",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

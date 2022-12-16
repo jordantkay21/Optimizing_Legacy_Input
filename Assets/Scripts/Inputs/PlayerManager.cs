@@ -11,15 +11,14 @@ public class PlayerManager : MonoBehaviour
 
     [SerializeField]
     private Player _player;
-
     [SerializeField]
     private Drone _drone;
-
     [SerializeField]
     private Forklift _forkLift;
-
     [SerializeField]
     private Crate _crate;
+    [SerializeField]
+    private Laptop _laptop;
 
     // Start is called before the first frame update
     void Start()
@@ -64,7 +63,34 @@ public class PlayerManager : MonoBehaviour
 
         _input.Punch.StrongPunch.performed += StrongPunch_performed;
         _input.Punch.WeakPunch.performed += WeakPunch_performed;
+
+        _input.Laptop.CameraSwitch.started += CameraSwitch_started;
+        _input.Laptop.CameraSwitch.canceled += CameraSwitch_canceled;
+        _input.Laptop.Escape.performed += Escape_performed2;
+        _input.Laptop.Escape.canceled += Escape_canceled;
     }
+
+    private void CameraSwitch_started(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _laptop.SwitchCam(true);
+    }
+
+    private void Escape_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _laptop.ExitCam(false);
+    }
+
+    private void Escape_performed2(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _laptop.ExitCam(true);
+    }
+
+    private void CameraSwitch_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _laptop.SwitchCam(false);
+    }
+
+
 
     private void WeakPunch_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
@@ -96,6 +122,18 @@ public class PlayerManager : MonoBehaviour
     private void Escape_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         _drone.ExitFlightMode();
+    }
+
+    public void EnableLaptopMode(bool laptopMode)
+    {
+        if (laptopMode == true)
+        {
+            _input.Laptop.Enable();
+        }
+        else
+        {
+            _input.Laptop.Disable();
+        }
     }
 
     public void EnablePunchMode(bool punchMode)

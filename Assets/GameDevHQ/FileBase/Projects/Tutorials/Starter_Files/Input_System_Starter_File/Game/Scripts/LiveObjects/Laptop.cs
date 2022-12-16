@@ -10,6 +10,12 @@ namespace Game.Scripts.LiveObjects
     public class Laptop : MonoBehaviour
     {
         [SerializeField]
+        private PlayerManager _playerManager;
+
+        private bool _switchPressed = false;
+        private bool _escapePressed = false;
+
+        [SerializeField]
         private Slider _progressBar;
         [SerializeField]
         private int _hackTime = 5;
@@ -29,7 +35,8 @@ namespace Game.Scripts.LiveObjects
             InteractableZone.onHoldEnded += InteractableZone_onHoldEnded;
         }
 
-        private void Update()
+
+        /*private void Update()
         {
             if (_hacked == true)
             {
@@ -54,7 +61,45 @@ namespace Game.Scripts.LiveObjects
                     ResetCameras();
                 }
             }
+        }*/
+
+        public void SwitchCam(bool press)
+        {
+            _switchPressed = press;
+
+            if (_hacked == true && _switchPressed == true)
+            {
+                var previous = _activeCamera;
+                _activeCamera++;
+
+
+                if (_activeCamera >= _cameras.Length)
+                    _activeCamera = 0;
+
+
+                _cameras[_activeCamera].Priority = 11;
+                _cameras[previous].Priority = 9;
+            }
         }
+
+        public void ExitCam(bool press)
+        {
+            _escapePressed = press;
+
+            if (_hacked == true && _escapePressed == true)
+            {
+                _hacked = false;
+                onHackEnded?.Invoke();
+                ResetCameras(); 
+                _playerManager.EnableLaptopMode(false);
+            }
+        }
+
+        public void OnCollisionExit(Collision collision)
+        {
+           
+        }
+
 
         void ResetCameras()
         {
@@ -99,6 +144,7 @@ namespace Game.Scripts.LiveObjects
 
             //successfully hacked
             _hacked = true;
+            _playerManager.EnableLaptopMode(true);
             _interactableZone.CompleteTask(3);
 
             //hide progress bar
